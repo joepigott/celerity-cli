@@ -1572,6 +1572,8 @@ dependencies = [
  "color",
  "dirs-next",
  "reqwest",
+ "serde",
+ "serde_json",
  "taskscheduler",
  "toml",
 ]

@@ -1,15 +1,25 @@
 use color::term::BrightRed;
+use clap::Parser;
+use cli::{CLI, Command};
 
 mod config;
+mod cli;
+mod request;
 
 fn main() {
-    if let Err(e) = dispatch() {
-        println!("{}: {}", BrightRed("Error:"), e.to_string());
+    match dispatch() {
+        Ok(result) => println!("{result}"),
+        Err(e) => eprintln!("{}: {}", BrightRed("Error:"), e),
     }
 }
 
-fn dispatch() -> Result<(), &'static str> {
-    let _config = config::config().ok_or("Configuration file not found.")?;
+fn dispatch() -> Result<String, String> {
+    let config = config::config()?;
+    let cli = CLI::parse();
 
-    Ok(())
+    match cli.command {
+        Command::List => {
+            request::list(config.server.host, config.server.port)
+        }
+    }
 }
