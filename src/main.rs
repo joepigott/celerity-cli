@@ -69,5 +69,8 @@ fn dispatch() -> Result<String, String> {
         Command::Active => {
             request::active(config.server.host, config.server.port)
         }
+        Command::Status => {
+            request::status(config.server.host, config.server.port)
+        }
     }
 }

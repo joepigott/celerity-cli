@@ -96,6 +96,9 @@ pub enum Command {
 
     /// Fetch the active task
     Active,
+
+    /// Fetch the scheduler status
+    Status,
 }
 
 fn date_parser(s: &str) -> Result<NaiveDateTime, String> {

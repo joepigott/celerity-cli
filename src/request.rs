@@ -122,6 +122,20 @@ pub fn active(host: String, port: u16) -> Result<String, String> {
     Ok(task.to_string())
 }
 
+pub fn status(host: String, port: u16) -> Result<String, String> {
+    let mut url = convert_url(host, port)?;
+    url.set_path("api/tasks/status");
+
+    let response = blocking::get(url)
+        .map_err(|e| e.to_string())?
+        .text()
+        .map_err(|e| e.to_string())?
+        .parse::<bool>()
+        .map_err(|e| e.to_string())?;
+
+    Ok(if response { "enabled".to_string() } else { "disabled".to_string() })
+}
+
 fn convert_url(host: String, port: u16) -> Result<Url, String> {
     // constructing urls from scratch is not very simple, so setting the url to
     // 'http://example.com' allows us to work off of a base and swap in the
