@@ -1,8 +1,9 @@
+use crate::util::ListInfo;
 use reqwest::blocking;
 use reqwest::Url;
-use taskscheduler::TaskQueue;
+use taskscheduler::{Task, TaskQueue};
 
-pub fn list(host: String, port: u16) -> Result<String, String> {
+pub fn list(host: String, port: u16, info: ListInfo) -> Result<String, String> {
     let mut url = convert_url(host, port)?;
     url.set_path("api/tasks");
 
@@ -12,19 +13,53 @@ pub fn list(host: String, port: u16) -> Result<String, String> {
         .map_err(|e| e.to_string())?;
 
     let queue: TaskQueue = serde_json::from_str(&response).map_err(|e| e.to_string())?;
+    let mut tasks: Vec<Task> = if info.completed {
+        queue.iter_completed().map(|t| t.to_owned()).collect()
+    } else {
+        queue.iter().map(|t| t.to_owned()).collect()
+    };
 
-    let priority = queue.show_priority();
-    let tasks: String = queue.iter().map(|t| t.to_string()).collect();
-    let completed: String = queue.iter_completed().map(|t| format!("{},", t.title)).collect();
+    // do some filtering based on cli options
 
-    Ok(format!("Priority: {priority}\n\n{tasks}\nCompleted: {{ {completed} }}"))
+    if let Some(before) = info.before {
+        tasks.retain(|t| t.deadline < before);
+    }
+    if let Some(after) = info.after {
+        tasks.retain(|t| t.deadline > after);
+    }
+    if let Some(shorter) = info.shorter {
+        tasks.retain(|t| t.duration < shorter);
+    }
+    if let Some(longer) = info.longer {
+        tasks.retain(|t| t.duration > longer);
+    }
+    if let Some(lower) = info.lower {
+        tasks.retain(|t| t.priority < lower);
+    }
+    if let Some(higher) = info.higher {
+        tasks.retain(|t| t.priority > higher);
+    }
+
+    // collect retained tasks into a string representation
+
+    if tasks.is_empty() {
+        Ok("No tasks match the specified bounds".to_string())
+    } else {
+        Ok(tasks.iter().map(|t| t.to_string()).collect())
+    }
 }
 
 fn convert_url(host: String, port: u16) -> Result<Url, String> {
+    // constructing urls from scratch is not very simple, so setting the url to
+    // 'http://example.com' allows us to work off of a base and swap in the
+    // user configured values.
     let mut url = Url::parse("http://example.com").map_err(|e| e.to_string())?;
-    url.set_host(Some(&host)).map_err(|_| "Unable to set URL host")?;
-    url.set_port(Some(port)).map_err(|_| "Unable to set URL port")?;
-    url.set_scheme("http").map_err(|_| "Unable to set URL scheme")?;
+    url.set_host(Some(&host))
+        .map_err(|_| "Unable to set URL host")?;
+    url.set_port(Some(port))
+        .map_err(|_| "Unable to set URL port")?;
+    url.set_scheme("http")
+        .map_err(|_| "Unable to set URL scheme")?;
 
     Ok(url)
 }
