@@ -89,6 +89,12 @@ pub enum Command {
         id: usize
     },
 
+    /// Mark a task as complete
+    Complete {
+        /// The ID of the task to be marked as complete
+        id: usize
+    },
+
     /// Enable the scheduler
     Enable,
 

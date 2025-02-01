@@ -60,6 +60,9 @@ fn dispatch() -> Result<String, String> {
         Command::Delete { id } => {
             request::delete(config.server.host, config.server.port, id)
         }
+        Command::Complete { id } => {
+            request::complete(config.server.host, config.server.port, id)
+        }
         Command::Enable => {
             request::enable(config.server.host, config.server.port, true)
         }
