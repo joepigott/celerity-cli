@@ -40,6 +40,25 @@ pub enum Command {
         #[arg(short = 'L', long)]
         lower: Option<u8>,
     },
+
+    /// Add a task to the queue
+    Add {
+        /// The task's title
+        #[arg(short, long, required = true)]
+        title: String,
+
+        /// The task's deadline
+        #[arg(short, long, required = true, value_parser = date_parser)]
+        deadline: NaiveDateTime,
+
+        /// The task's estimated duration
+        #[arg(short = 'D', long, required = true, value_parser = duration_parser)]
+        duration: Duration,
+
+        /// The task's priority. Lower values are higher priority.
+        #[arg(short, long, required = true)]
+        priority: u8,
+    },
 }
 
 fn date_parser(s: &str) -> Result<NaiveDateTime, String> {

@@ -1,6 +1,7 @@
 use clap::Parser;
 use cli::{Cli, Command};
 use color::term::Red;
+use taskscheduler::NaiveTask;
 
 mod cli;
 mod config;
@@ -38,6 +39,15 @@ fn dispatch() -> Result<String, String> {
                 lower,
             };
             request::list(config.server.host, config.server.port, info)
+        }
+        Command::Add {
+            title,
+            deadline,
+            duration,
+            priority,
+        } => {
+            let new_task = NaiveTask::new(title, deadline, duration, priority);
+            request::add(config.server.host, config.server.port, new_task)
         }
     }
 }

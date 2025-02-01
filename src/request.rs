@@ -1,7 +1,7 @@
 use crate::util::ListInfo;
-use reqwest::blocking;
+use reqwest::blocking::{self, Client};
 use reqwest::Url;
-use taskscheduler::{Task, TaskQueue};
+use taskscheduler::{NaiveTask, Task, TaskQueue};
 
 pub fn list(host: String, port: u16, info: ListInfo) -> Result<String, String> {
     let mut url = convert_url(host, port)?;
@@ -47,6 +47,21 @@ pub fn list(host: String, port: u16, info: ListInfo) -> Result<String, String> {
     } else {
         Ok(tasks.iter().map(|t| t.to_string()).collect())
     }
+}
+
+pub fn add(host: String, port: u16, task: NaiveTask) -> Result<String, String> {
+    let mut url = convert_url(host, port)?;
+    url.set_path("api/tasks");
+
+    let client = Client::new();
+
+    client
+        .post(url)
+        .body(serde_json::to_string(&task).map_err(|e| e.to_string())?)
+        .send()
+        .map_err(|e| e.to_string())?
+        .text()
+        .map_err(|e| e.to_string())
 }
 
 fn convert_url(host: String, port: u16) -> Result<Url, String> {
