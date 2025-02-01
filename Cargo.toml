@@ -1,0 +1,10 @@
+[package]
+name = "tasks"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+clap = { version = "4.5.27", features = ["derive"] }
+reqwest = { version = "0.12.12", features = ["blocking"] }
+taskscheduler = { git = "https://git.pigroy.xyz/pigroy/taskscheduler.git" }
+toml = "0.8.19"
