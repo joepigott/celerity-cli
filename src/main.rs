@@ -66,5 +66,8 @@ fn dispatch() -> Result<String, String> {
         Command::Disable => {
             request::enable(config.server.host, config.server.port, false)
         }
+        Command::Active => {
+            request::active(config.server.host, config.server.port)
+        }
     }
 }

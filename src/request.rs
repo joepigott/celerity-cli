@@ -108,6 +108,20 @@ pub fn enable(host: String, port: u16, enable: bool) -> Result<String, String> {
         .map_err(|e| e.to_string())
 }
 
+pub fn active(host: String, port: u16) -> Result<String, String> {
+    let mut url = convert_url(host, port)?;
+    url.set_path("api/tasks/active");
+
+    let response = blocking::get(url)
+        .map_err(|e| e.to_string())?
+        .text()
+        .map_err(|e| e.to_string())?;
+    let task: Task = serde_json::from_str(&response)
+        .map_err(|e| e.to_string())?;
+
+    Ok(task.to_string())
+}
+
 fn convert_url(host: String, port: u16) -> Result<Url, String> {
     // constructing urls from scratch is not very simple, so setting the url to
     // 'http://example.com' allows us to work off of a base and swap in the
