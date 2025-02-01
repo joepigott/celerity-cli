@@ -1,8 +1,8 @@
 use crate::util::ListInfo;
 use reqwest::blocking::{self, Client};
 use reqwest::Url;
-use taskscheduler::{NaiveTask, Task, UpdateTask, TaskQueue};
 use taskscheduler::priority::Priority;
+use taskscheduler::{NaiveTask, Task, TaskQueue, UpdateTask};
 
 pub fn list(host: String, port: u16, info: ListInfo) -> Result<String, String> {
     let mut url = convert_url(host, port)?;
@@ -112,7 +112,11 @@ pub fn complete(host: String, port: u16, id: usize) -> Result<String, String> {
 
 pub fn enable(host: String, port: u16, enable: bool) -> Result<String, String> {
     let mut url = convert_url(host, port)?;
-    url.set_path(if enable {"api/tasks/enable"} else {"api/tasks/disable"});
+    url.set_path(if enable {
+        "api/tasks/enable"
+    } else {
+        "api/tasks/disable"
+    });
 
     let client = Client::new();
 
@@ -132,8 +136,7 @@ pub fn active(host: String, port: u16) -> Result<String, String> {
         .map_err(|e| e.to_string())?
         .text()
         .map_err(|e| e.to_string())?;
-    let task: Task = serde_json::from_str(&response)
-        .map_err(|e| e.to_string())?;
+    let task: Task = serde_json::from_str(&response).map_err(|e| e.to_string())?;
 
     Ok(task.to_string())
 }
@@ -149,16 +152,25 @@ pub fn status(host: String, port: u16) -> Result<String, String> {
         .parse::<bool>()
         .map_err(|e| e.to_string())?;
 
-    Ok(if response { "enabled".to_string() } else { "disabled".to_string() })
+    Ok(if response {
+        "enabled".to_string()
+    } else {
+        "disabled".to_string()
+    })
 }
 
-pub fn set_priority(host: String, port: u16, priority: Box<dyn Priority>) -> Result<String, String> {
+pub fn set_priority(
+    host: String,
+    port: u16,
+    priority: Box<dyn Priority>,
+) -> Result<String, String> {
     let mut url = convert_url(host, port)?;
     url.set_path("api/tasks/priority");
 
     let client = Client::new();
 
-    client.put(url)
+    client
+        .put(url)
         .body(serde_json::to_string(&priority).map_err(|e| e.to_string())?)
         .send()
         .map_err(|e| e.to_string())?

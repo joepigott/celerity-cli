@@ -86,13 +86,13 @@ pub enum Command {
     /// Delete a task from the queue
     Delete {
         /// The ID of the task to be deleted
-        id: usize
+        id: usize,
     },
 
     /// Mark a task as complete
     Complete {
         /// The ID of the task to be marked as complete
-        id: usize
+        id: usize,
     },
 
     /// Enable the scheduler
@@ -110,7 +110,7 @@ pub enum Command {
     /// Control the scheduler priority
     Priority {
         #[command(subcommand)]
-        command: PriorityCommand
+        command: PriorityCommand,
     },
 }
 
@@ -124,7 +124,7 @@ pub enum PriorityCommand {
         /// The priority algorithm to apply to the scheduler
         #[arg(value_parser = priority_parser)]
         priority: Box<dyn Priority>,
-    }
+    },
 }
 
 fn date_parser(s: &str) -> Result<NaiveDateTime, String> {
@@ -133,7 +133,10 @@ fn date_parser(s: &str) -> Result<NaiveDateTime, String> {
 }
 
 fn duration_parser(s: &str) -> Result<Duration, String> {
-    let unit = s.chars().last().ok_or("Please provide a valid duration unit (s, m, h, d)")?;
+    let unit = s
+        .chars()
+        .last()
+        .ok_or("Please provide a valid duration unit (s, m, h, d)")?;
     let value = &s[..s.len() - 1]
         .parse::<usize>()
         .map_err(|_| "Invalid duration value")?;
@@ -155,6 +158,6 @@ fn priority_parser(s: &str) -> Result<Box<dyn Priority>, String> {
         "longest" => Box::new(priority::Longest {}),
         "highest" => Box::new(priority::HighestPriority {}),
         "lowest" => Box::new(priority::LowestPriority {}),
-        _ => Err("Unknown priority")?
+        _ => Err("Unknown priority")?,
     })
 }
