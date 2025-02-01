@@ -59,6 +59,12 @@ pub enum Command {
         #[arg(short, long, required = true)]
         priority: u8,
     },
+
+    /// Enable the scheduler
+    Enable,
+
+    /// Disable the scheduler
+    Disable,
 }
 
 fn date_parser(s: &str) -> Result<NaiveDateTime, String> {

@@ -64,6 +64,20 @@ pub fn add(host: String, port: u16, task: NaiveTask) -> Result<String, String> {
         .map_err(|e| e.to_string())
 }
 
+pub fn enable(host: String, port: u16, enable: bool) -> Result<String, String> {
+    let mut url = convert_url(host, port)?;
+    url.set_path(if enable {"api/tasks/enable"} else {"api/tasks/disable"});
+
+    let client = Client::new();
+
+    client
+        .post(url)
+        .send()
+        .map_err(|e| e.to_string())?
+        .text()
+        .map_err(|e| e.to_string())
+}
+
 fn convert_url(host: String, port: u16) -> Result<Url, String> {
     // constructing urls from scratch is not very simple, so setting the url to
     // 'http://example.com' allows us to work off of a base and swap in the

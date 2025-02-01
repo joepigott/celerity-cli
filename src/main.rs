@@ -49,5 +49,11 @@ fn dispatch() -> Result<String, String> {
             let new_task = NaiveTask::new(title, deadline, duration, priority);
             request::add(config.server.host, config.server.port, new_task)
         }
+        Command::Enable => {
+            request::enable(config.server.host, config.server.port, true)
+        }
+        Command::Disable => {
+            request::enable(config.server.host, config.server.port, false)
+        }
     }
 }
