@@ -60,6 +60,28 @@ pub enum Command {
         priority: u8,
     },
 
+    /// Update a task's information
+    Update {
+        /// The ID of the task to be updated
+        id: usize,
+
+        /// A new title
+        #[arg(short, long)]
+        title: Option<String>,
+
+        /// A new deadline
+        #[arg(short, long, value_parser = date_parser)]
+        deadline: Option<NaiveDateTime>,
+
+        /// A new duration
+        #[arg(short = 'D', long, value_parser = duration_parser)]
+        duration: Option<Duration>,
+
+        /// A new priority
+        #[arg(short, long)]
+        priority: Option<u8>,
+    },
+
     /// Enable the scheduler
     Enable,
 
@@ -73,7 +95,7 @@ fn date_parser(s: &str) -> Result<NaiveDateTime, String> {
 }
 
 fn duration_parser(s: &str) -> Result<Duration, String> {
-    let unit = s.chars().last().ok_or("Please provide a duration unit")?;
+    let unit = s.chars().last().ok_or("Please provide a valid duration unit (s, m, h, d)")?;
     let value = &s[..s.len() - 1]
         .parse::<usize>()
         .map_err(|_| "Invalid duration value")?;
@@ -83,6 +105,6 @@ fn duration_parser(s: &str) -> Result<Duration, String> {
         'm' => Ok(Duration::minutes(*value as i64)),
         'h' => Ok(Duration::hours(*value as i64)),
         'd' => Ok(Duration::days(*value as i64)),
-        _ => Err("Invalid duration unit")?,
+        _ => Err("Please provide a valid duration unit (s, m, h, d)")?,
     }
 }
