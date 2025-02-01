@@ -72,5 +72,15 @@ fn dispatch() -> Result<String, String> {
         Command::Status => {
             request::status(config.server.host, config.server.port)
         }
+        Command::Priority { command } => {
+            match command {
+                cli::PriorityCommand::Set { priority } => {
+                    request::set_priority(config.server.host, config.server.port, priority)
+                }
+                cli::PriorityCommand::Show => {
+                    request::get_priority(config.server.host, config.server.port)
+                }
+            }
+        }
     }
 }

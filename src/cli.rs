@@ -1,5 +1,6 @@
 use chrono::{Duration, NaiveDateTime};
 use clap::{Parser, Subcommand};
+use taskscheduler::priority::{self, Priority};
 
 #[derive(Parser)]
 #[command(author, version, about, long_about = None, disable_help_flag = true)]
@@ -99,6 +100,25 @@ pub enum Command {
 
     /// Fetch the scheduler status
     Status,
+
+    /// Control the scheduler priority
+    Priority {
+        #[command(subcommand)]
+        command: PriorityCommand
+    },
+}
+
+#[derive(Subcommand)]
+pub enum PriorityCommand {
+    /// Show the current priority
+    Show,
+
+    /// Set the scheduler priority
+    Set {
+        /// The priority algorithm to apply to the scheduler
+        #[arg(value_parser = priority_parser)]
+        priority: Box<dyn Priority>,
+    }
 }
 
 fn date_parser(s: &str) -> Result<NaiveDateTime, String> {
@@ -119,4 +139,16 @@ fn duration_parser(s: &str) -> Result<Duration, String> {
         'd' => Ok(Duration::days(*value as i64)),
         _ => Err("Please provide a valid duration unit (s, m, h, d)")?,
     }
+}
+
+fn priority_parser(s: &str) -> Result<Box<dyn Priority>, String> {
+    Ok(match s.to_lowercase().as_str() {
+        "fifo" => Box::new(priority::FIFO {}),
+        "deadline" => Box::new(priority::Deadline {}),
+        "shortest" => Box::new(priority::Shortest {}),
+        "longest" => Box::new(priority::Longest {}),
+        "highest" => Box::new(priority::HighestPriority {}),
+        "lowest" => Box::new(priority::LowestPriority {}),
+        _ => Err("Unknown priority")?
+    })
 }
