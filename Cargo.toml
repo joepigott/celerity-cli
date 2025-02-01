@@ -5,6 +5,8 @@ edition = "2021"
 
 [dependencies]
 clap = { version = "4.5.27", features = ["derive"] }
+dirs-next = "2.0.0"
 reqwest = { version = "0.12.12", features = ["blocking"] }
 taskscheduler = { git = "https://git.pigroy.xyz/pigroy/taskscheduler.git" }
 toml = "0.8.19"
+color = { git = "https://git.pigroy.xyz/pigroy/color.git" }

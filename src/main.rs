@@ -1,3 +1,15 @@
+use color::term::BrightRed;
+
+mod config;
+
 fn main() {
-    println!("Hello, world!");
+    if let Err(e) = dispatch() {
+        println!("{}: {}", BrightRed("Error:"), e.to_string());
+    }
+}
+
+fn dispatch() -> Result<(), &'static str> {
+    let _config = config::config().ok_or("Configuration file not found.")?;
+
+    Ok(())
 }
