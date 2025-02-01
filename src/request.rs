@@ -79,6 +79,21 @@ pub fn update(host: String, port: u16, task: UpdateTask) -> Result<String, Strin
         .map_err(|e| e.to_string())
 }
 
+pub fn delete(host: String, port: u16, id: usize) -> Result<String, String> {
+    let mut url = convert_url(host, port)?;
+    url.set_path("api/tasks");
+
+    let client = Client::new();
+
+    client
+        .delete(url)
+        .body(serde_json::to_string(&id).map_err(|e| e.to_string())?)
+        .send()
+        .map_err(|e| e.to_string())?
+        .text()
+        .map_err(|e| e.to_string())
+}
+
 pub fn enable(host: String, port: u16, enable: bool) -> Result<String, String> {
     let mut url = convert_url(host, port)?;
     url.set_path(if enable {"api/tasks/enable"} else {"api/tasks/disable"});

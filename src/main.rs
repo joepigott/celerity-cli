@@ -57,6 +57,9 @@ fn dispatch() -> Result<String, String> {
                 .with_priority(priority);
             request::update(config.server.host, config.server.port, update_task)
         }
+        Command::Delete { id } => {
+            request::delete(config.server.host, config.server.port, id)
+        }
         Command::Enable => {
             request::enable(config.server.host, config.server.port, true)
         }

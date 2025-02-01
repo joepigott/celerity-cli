@@ -82,6 +82,12 @@ pub enum Command {
         priority: Option<u8>,
     },
 
+    /// Delete a task from the queue
+    Delete {
+        /// The ID of the task to be deleted
+        id: usize
+    },
+
     /// Enable the scheduler
     Enable,
 
