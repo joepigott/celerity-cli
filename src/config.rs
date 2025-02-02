@@ -1,19 +1,26 @@
 use serde::Deserialize;
 
 #[derive(Deserialize)]
+/// Struct representation of the user configuration.
 pub struct Config {
     pub server: Server,
     pub client: Client,
 }
 
 #[derive(Deserialize)]
+/// Struct representation of the `server` section of the user configuration.
 pub struct Server {
+    /// Server host name
     pub host: String,
+
+    /// Server port
     pub port: u16,
 }
 
 #[derive(Deserialize)]
+/// Struct representation of the `client` section of the user configuration.
 pub struct Client {
+    /// Format to be used for parsing dates into `NaiveDateTime` instances.
     pub date_format: String,
 }
 

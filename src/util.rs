@@ -1,5 +1,6 @@
 use chrono::{Duration, NaiveDateTime};
 
+/// Contains information to be used in filtering the task list.
 pub struct ListInfo {
     pub completed: bool,
     pub before: Option<NaiveDateTime>,

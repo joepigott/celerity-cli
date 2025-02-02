@@ -4,6 +4,11 @@ use reqwest::Url;
 use taskscheduler::priority::Priority;
 use taskscheduler::{NaiveTask, Task, TaskQueue, UpdateTask};
 
+/// Sends a `GET` request to fetch the task queue, and lists the tasks. 
+/// `ListInfo` contains arguments defined by the user for filtering. The 
+/// `completed` flag switches the array of tasks from those in the active queue
+/// to those in the completed list. The other arguments define bounds on which 
+/// to filter the tasks.
 pub fn list(host: String, port: u16, info: ListInfo) -> Result<String, String> {
     let mut url = convert_url(host, port)?;
     url.set_path("api/tasks");
@@ -50,6 +55,8 @@ pub fn list(host: String, port: u16, info: ListInfo) -> Result<String, String> {
     }
 }
 
+/// Sends a `POST` request with a `NaiveTask` as the body. The server will give
+/// this task an ID and add it to the queue.
 pub fn add(host: String, port: u16, task: NaiveTask) -> Result<String, String> {
     let mut url = convert_url(host, port)?;
     url.set_path("api/tasks");
@@ -65,6 +72,9 @@ pub fn add(host: String, port: u16, task: NaiveTask) -> Result<String, String> {
         .map_err(|e| e.to_string())
 }
 
+/// Sends a `PUT` request with an `UpdateTask` as the body. The server will 
+/// parse the `Some` fields and update the corresponding task with the new
+/// information.
 pub fn update(host: String, port: u16, task: UpdateTask) -> Result<String, String> {
     let mut url = convert_url(host, port)?;
     url.set_path("api/tasks");
@@ -80,6 +90,9 @@ pub fn update(host: String, port: u16, task: UpdateTask) -> Result<String, Strin
         .map_err(|e| e.to_string())
 }
 
+/// Sends a `DELETE` request with an ID as the body. The server will delete the
+/// corresponding task---it will be removed entirely and **not** be added to 
+/// the completed queue.
 pub fn delete(host: String, port: u16, id: usize, completed: bool) -> Result<String, String> {
     let mut url = convert_url(host, port)?;
     url.set_path(if completed {
@@ -99,6 +112,8 @@ pub fn delete(host: String, port: u16, id: usize, completed: bool) -> Result<Str
         .map_err(|e| e.to_string())
 }
 
+/// Sends a `PUT` request with an ID as the body. The server will remove the
+/// task from the queue and add it to the completed list.
 pub fn complete(host: String, port: u16, id: usize) -> Result<String, String> {
     let mut url = convert_url(host, port)?;
     url.set_path("api/tasks/complete");
@@ -114,6 +129,8 @@ pub fn complete(host: String, port: u16, id: usize) -> Result<String, String> {
         .map_err(|e| e.to_string())
 }
 
+/// Sends a `POST` request to enable or disable the scheduler, depending on the
+/// value of `enable`.
 pub fn enable(host: String, port: u16, enable: bool) -> Result<String, String> {
     let mut url = convert_url(host, port)?;
     url.set_path(if enable {
@@ -132,6 +149,9 @@ pub fn enable(host: String, port: u16, enable: bool) -> Result<String, String> {
         .map_err(|e| e.to_string())
 }
 
+/// Sends a `GET` request, which will return the active task according to the
+/// current scheduler priority. The task will be returned whether the scheduler
+/// is enabled or not.
 pub fn active(host: String, port: u16) -> Result<String, String> {
     let mut url = convert_url(host, port)?;
     url.set_path("api/tasks/active");
@@ -145,6 +165,8 @@ pub fn active(host: String, port: u16) -> Result<String, String> {
     Ok(task.to_string())
 }
 
+/// Sends a `GET` request, which will return the status of the scheduler
+/// (`enabled` or `disabled`).
 pub fn status(host: String, port: u16) -> Result<String, String> {
     let mut url = convert_url(host, port)?;
     url.set_path("api/tasks/status");
@@ -163,6 +185,8 @@ pub fn status(host: String, port: u16) -> Result<String, String> {
     })
 }
 
+/// Sends a `PUT` request with a `Priority` trait object as the body. The 
+/// server will apply the priority to the scheduler.
 pub fn set_priority(
     host: String,
     port: u16,
@@ -182,6 +206,8 @@ pub fn set_priority(
         .map_err(|e| e.to_string())
 }
 
+/// Sends a `GET` request, which returns a string representation of the current
+/// scheduler priority.
 pub fn get_priority(host: String, port: u16) -> Result<String, String> {
     let mut url = convert_url(host, port)?;
     url.set_path("api/tasks/priority");
@@ -195,10 +221,10 @@ pub fn get_priority(host: String, port: u16) -> Result<String, String> {
     Ok(priority.string())
 }
 
+/// Converts a user-defined `host` and `port` into a URL usable by `reqwest`.
+/// `reqwest` URL building is not very good, so a base URL of 
+/// `http://example.com` is defined and the user options are applied to it.
 fn convert_url(host: String, port: u16) -> Result<Url, String> {
-    // constructing urls from scratch is not very simple, so setting the url to
-    // 'http://example.com' allows us to work off of a base and swap in the
-    // user configured values.
     let mut url = Url::parse("http://example.com").map_err(|e| e.to_string())?;
     url.set_host(Some(&host))
         .map_err(|_| "Unable to set URL host")?;

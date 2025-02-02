@@ -131,11 +131,14 @@ pub enum PriorityCommand {
     },
 }
 
+/// Parse a `NaiveDateTime` from the command line. Uses the `date_format` field
+/// from the config file.
 fn date_parser(s: &str) -> Result<NaiveDateTime, String> {
     let format = crate::config::date_format()?;
     NaiveDateTime::parse_from_str(s, &format).map_err(|e| e.to_string())
 }
 
+/// Parse a `Duration` from the command line.
 fn duration_parser(s: &str) -> Result<Duration, String> {
     let unit = s
         .chars()
@@ -154,6 +157,9 @@ fn duration_parser(s: &str) -> Result<Duration, String> {
     }
 }
 
+/// Parse a `dyn Priority` from the command line. Current limitations prevent
+/// the initialization of unknown trait objects on the server, so options must
+/// be predefined on the server for now.
 fn priority_parser(s: &str) -> Result<Box<dyn Priority>, String> {
     Ok(match s.to_lowercase().as_str() {
         "fifo" => Box::new(priority::FIFO {}),
