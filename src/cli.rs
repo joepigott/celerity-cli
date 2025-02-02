@@ -87,6 +87,10 @@ pub enum Command {
     Delete {
         /// The ID of the task to be deleted
         id: usize,
+
+        /// Delete a task from the completed list
+        #[arg(short, long)]
+        completed: bool,
     },
 
     /// Mark a task as complete

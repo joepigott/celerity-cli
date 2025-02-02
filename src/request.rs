@@ -80,9 +80,13 @@ pub fn update(host: String, port: u16, task: UpdateTask) -> Result<String, Strin
         .map_err(|e| e.to_string())
 }
 
-pub fn delete(host: String, port: u16, id: usize) -> Result<String, String> {
+pub fn delete(host: String, port: u16, id: usize, completed: bool) -> Result<String, String> {
     let mut url = convert_url(host, port)?;
-    url.set_path("api/tasks");
+    url.set_path(if completed {
+        "api/tasks/complete"
+    } else {
+        "api/tasks"
+    });
 
     let client = Client::new();
 
