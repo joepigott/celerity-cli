@@ -168,6 +168,10 @@ fn priority_parser(s: &str) -> Result<Box<dyn Priority>, String> {
         "longest" => Box::new(priority::Longest {}),
         "highest" => Box::new(priority::HighestPriority {}),
         "lowest" => Box::new(priority::LowestPriority {}),
+        "shortesturgency" => Box::new(priority::ShortestWithUrgency {
+            deadline_weight: 1,
+            duration_weight: 1,
+        }),
         _ => Err("Unknown priority")?,
     })
 }
