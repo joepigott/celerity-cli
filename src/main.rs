@@ -31,6 +31,7 @@ fn dispatch() -> Result<String, String> {
         } => {
             let info = util::ListInfo {
                 completed,
+                date_format: config.client.date_format,
                 before,
                 after,
                 shorter,

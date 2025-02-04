@@ -3,6 +3,7 @@ use reqwest::blocking::{self, Client};
 use reqwest::Url;
 use taskscheduler::priority::Priority;
 use taskscheduler::{NaiveTask, Task, TaskQueue, UpdateTask};
+use chrono::Duration;
 
 /// Sends a `GET` request to fetch the task queue, and lists the tasks. 
 /// `ListInfo` contains arguments defined by the user for filtering. The 
@@ -51,7 +52,7 @@ pub fn list(host: String, port: u16, info: ListInfo) -> Result<String, String> {
     if tasks.is_empty() {
         Ok("No tasks match the specified bounds".to_string())
     } else {
-        Ok(tasks.iter().map(|t| t.to_string()).collect())
+        Ok(tasks.iter().map(|t| t.display(&info.date_format)).collect())
     }
 }
 
@@ -234,4 +235,47 @@ fn convert_url(host: String, port: u16) -> Result<Url, String> {
         .map_err(|_| "Unable to set URL scheme")?;
 
     Ok(url)
+}
+
+trait DisplayTask {
+    fn display(&self, date_format: &str) -> String;
+}
+
+impl DisplayTask for Task {
+    fn display(&self, date_format: &str) -> String {
+        format!(
+            "{} - {}\n\tDeadline: {}\n\tTime Remaining: {}\n\tPriority: {}\n",
+            self.id(),
+            self.title,
+            self.deadline.format(date_format),
+            self.duration.display(),
+            self.priority,
+        )
+    }
+}
+
+trait DisplayDuration {
+    fn display(&self) -> String;
+}
+
+impl DisplayDuration for Duration {
+    fn display(&self) -> String {
+        let hours = self.num_hours();
+        let minutes = self.num_minutes() % 60;
+        let seconds = self.num_seconds() % 60;
+
+        let mut result = String::new();
+
+        if hours != 0 {
+            result.push_str(&format!("{hours}h "));
+        }
+        if minutes != 0 {
+            result.push_str(&format!("{minutes}m "));
+        }
+        if seconds != 0 {
+            result.push_str(&format!("{seconds}s"));
+        }
+
+        result
+    }
 }
