@@ -31,7 +31,6 @@ fn dispatch() -> Result<String, String> {
         } => {
             let info = util::ListInfo {
                 completed,
-                date_format: config.client.date_format,
                 before,
                 after,
                 shorter,
@@ -39,7 +38,7 @@ fn dispatch() -> Result<String, String> {
                 higher,
                 lower,
             };
-            request::list(config.server.host, config.server.port, info)
+            request::list(config.server.host, config.server.port, info, config.client.date_format)
         }
         Command::Add {
             title,
@@ -68,7 +67,7 @@ fn dispatch() -> Result<String, String> {
         Command::Complete { id } => request::complete(config.server.host, config.server.port, id),
         Command::Enable => request::enable(config.server.host, config.server.port, true),
         Command::Disable => request::enable(config.server.host, config.server.port, false),
-        Command::Active => request::active(config.server.host, config.server.port),
+        Command::Active => request::active(config.server.host, config.server.port, config.client.date_format),
         Command::Status => request::status(config.server.host, config.server.port),
         Command::Priority { command } => match command {
             cli::PriorityCommand::Set { priority } => {

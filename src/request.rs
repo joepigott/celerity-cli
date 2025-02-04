@@ -10,7 +10,7 @@ use chrono::Duration;
 /// `completed` flag switches the array of tasks from those in the active queue
 /// to those in the completed list. The other arguments define bounds on which 
 /// to filter the tasks.
-pub fn list(host: String, port: u16, info: ListInfo) -> Result<String, String> {
+pub fn list(host: String, port: u16, info: ListInfo, date_format: String) -> Result<String, String> {
     let mut url = convert_url(host, port)?;
     url.set_path("api/tasks");
 
@@ -52,7 +52,7 @@ pub fn list(host: String, port: u16, info: ListInfo) -> Result<String, String> {
     if tasks.is_empty() {
         Ok("No tasks match the specified bounds".to_string())
     } else {
-        Ok(tasks.iter().map(|t| t.display(&info.date_format)).collect())
+        Ok(tasks.iter().map(|t| t.display(&date_format)).collect())
     }
 }
 
@@ -153,7 +153,7 @@ pub fn enable(host: String, port: u16, enable: bool) -> Result<String, String> {
 /// Sends a `GET` request, which will return the active task according to the
 /// current scheduler priority. The task will be returned whether the scheduler
 /// is enabled or not.
-pub fn active(host: String, port: u16) -> Result<String, String> {
+pub fn active(host: String, port: u16, date_format: String) -> Result<String, String> {
     let mut url = convert_url(host, port)?;
     url.set_path("api/tasks/active");
 
@@ -163,7 +163,7 @@ pub fn active(host: String, port: u16) -> Result<String, String> {
         .map_err(|e| e.to_string())?;
     let task: Task = serde_json::from_str(&response).map_err(|e| e.to_string())?;
 
-    Ok(task.to_string())
+    Ok(task.display(&date_format))
 }
 
 /// Sends a `GET` request, which will return the status of the scheduler
