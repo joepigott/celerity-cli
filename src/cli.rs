@@ -3,7 +3,7 @@ use clap::{Parser, Subcommand};
 use taskscheduler::priority::{self, Priority};
 
 #[derive(Parser)]
-#[command(author, version, about, long_about = None, disable_help_flag = true)]
+#[command(author, version, about, long_about = None)]
 pub struct Cli {
     #[command(subcommand)]
     pub command: Command,
@@ -34,7 +34,7 @@ pub enum Command {
         longer: Option<Duration>,
 
         /// List tasks with higher than the provided priority
-        #[arg(short, long)]
+        #[arg(short = 'H', long)]
         higher: Option<u8>,
 
         /// List tasks with lower than the provided priority
