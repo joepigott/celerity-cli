@@ -29,7 +29,7 @@ pub enum Command {
         #[arg(short, long, value_parser = duration_parser)]
         shorter: Option<Duration>,
 
-        /// List tasks shorter than the provided duration
+        /// List tasks longer than the provided duration
         #[arg(short, long, value_parser = duration_parser)]
         longer: Option<Duration>,
 
