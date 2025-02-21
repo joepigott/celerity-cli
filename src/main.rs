@@ -10,7 +10,7 @@ mod util;
 
 fn main() {
     match dispatch() {
-        Ok(result) => println!("{result}"),
+        Ok(result) => println!("{}", result.trim()),
         Err(e) => eprintln!("{}: {}", Red("Error"), e),
     }
 }
