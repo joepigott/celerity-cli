@@ -1,4 +1,5 @@
 use chrono::{Duration, NaiveDateTime};
+use taskscheduler::PriorityLevel;
 
 /// Contains information to be used in filtering the task list.
 pub struct ListInfo {
@@ -7,6 +8,6 @@ pub struct ListInfo {
     pub after: Option<NaiveDateTime>,
     pub shorter: Option<Duration>,
     pub longer: Option<Duration>,
-    pub lower: Option<u8>,
-    pub higher: Option<u8>,
+    pub lower: Option<PriorityLevel>,
+    pub higher: Option<PriorityLevel>,
 }

@@ -1,6 +1,7 @@
 use chrono::{Duration, NaiveDateTime};
 use clap::{Parser, Subcommand};
 use taskscheduler::priority::{self, Priority};
+use taskscheduler::PriorityLevel;
 
 #[derive(Parser)]
 #[command(author, version, about, long_about = None)]
@@ -35,11 +36,11 @@ pub enum Command {
 
         /// List tasks with higher than the provided priority
         #[arg(short = 'H', long)]
-        higher: Option<u8>,
+        higher: Option<PriorityLevel>,
 
         /// List tasks with lower than the provided priority
         #[arg(short = 'L', long)]
-        lower: Option<u8>,
+        lower: Option<PriorityLevel>,
     },
 
     /// Add a task to the queue
@@ -58,7 +59,7 @@ pub enum Command {
 
         /// The task's priority. Lower values are higher priority.
         #[arg(short, long, required = true)]
-        priority: u8,
+        priority: PriorityLevel,
     },
 
     /// Update a task's information
@@ -80,7 +81,7 @@ pub enum Command {
 
         /// A new priority
         #[arg(short, long)]
-        priority: Option<u8>,
+        priority: Option<PriorityLevel>,
     },
 
     /// Delete a task from the queue
