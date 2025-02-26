@@ -1,7 +1,7 @@
 use crate::util::ListInfo;
 use chrono::Duration;
 use reqwest::blocking::{self, Client};
-use reqwest::Url;
+use reqwest::{Url, StatusCode};
 use taskscheduler::priority::Priority;
 use taskscheduler::{NaiveTask, Task, TaskQueue, UpdateTask};
 
@@ -163,12 +163,21 @@ pub fn active(host: String, port: u16, date_format: String) -> Result<String, St
     url.set_path("api/tasks/active");
 
     let response = blocking::get(url)
-        .map_err(|e| e.to_string())?
-        .text()
         .map_err(|e| e.to_string())?;
-    let task: Task = serde_json::from_str(&response).map_err(|e| e.to_string())?;
 
-    Ok(task.display(&date_format))
+    match response.status() {
+        StatusCode::OK => {
+            let text = response.text().map_err(|e| e.to_string())?;
+            let task: Task = serde_json::from_str(&text).map_err(|e| e.to_string())?;
+            Ok(task.display(&date_format))
+        },
+        StatusCode::NOT_FOUND => {
+            Ok("There are no tasks in the queue".to_string())
+        }
+        _ => {
+            Err("Unable to retrieve active task".to_string())
+        }
+    }
 }
 
 /// Sends a `GET` request, which will return the status of the scheduler
