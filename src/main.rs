@@ -38,7 +38,12 @@ fn dispatch() -> Result<String, String> {
                 higher,
                 lower,
             };
-            request::list(config.server.host, config.server.port, info, config.client.date_format)
+            request::list(
+                config.server.host,
+                config.server.port,
+                info,
+                config.client.date_format,
+            )
         }
         Command::Add {
             title,
@@ -63,11 +68,17 @@ fn dispatch() -> Result<String, String> {
                 .with_priority(priority);
             request::update(config.server.host, config.server.port, update_task)
         }
-        Command::Delete { id, completed } => request::delete(config.server.host, config.server.port, id, completed),
+        Command::Delete { id, completed } => {
+            request::delete(config.server.host, config.server.port, id, completed)
+        }
         Command::Complete { id } => request::complete(config.server.host, config.server.port, id),
         Command::Enable => request::enable(config.server.host, config.server.port, true),
         Command::Disable => request::enable(config.server.host, config.server.port, false),
-        Command::Active => request::active(config.server.host, config.server.port, config.client.date_format),
+        Command::Active => request::active(
+            config.server.host,
+            config.server.port,
+            config.client.date_format,
+        ),
         Command::Status => request::status(config.server.host, config.server.port),
         Command::Priority { command } => match command {
             cli::PriorityCommand::Set { priority } => {

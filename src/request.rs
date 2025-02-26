@@ -1,16 +1,21 @@
 use crate::util::ListInfo;
+use chrono::Duration;
 use reqwest::blocking::{self, Client};
 use reqwest::Url;
 use taskscheduler::priority::Priority;
 use taskscheduler::{NaiveTask, Task, TaskQueue, UpdateTask};
-use chrono::Duration;
 
-/// Sends a `GET` request to fetch the task queue, and lists the tasks. 
-/// `ListInfo` contains arguments defined by the user for filtering. The 
+/// Sends a `GET` request to fetch the task queue, and lists the tasks.
+/// `ListInfo` contains arguments defined by the user for filtering. The
 /// `completed` flag switches the array of tasks from those in the active queue
-/// to those in the completed list. The other arguments define bounds on which 
+/// to those in the completed list. The other arguments define bounds on which
 /// to filter the tasks.
-pub fn list(host: String, port: u16, info: ListInfo, date_format: String) -> Result<String, String> {
+pub fn list(
+    host: String,
+    port: u16,
+    info: ListInfo,
+    date_format: String,
+) -> Result<String, String> {
     let mut url = convert_url(host, port)?;
     url.set_path("api/tasks");
 
@@ -73,7 +78,7 @@ pub fn add(host: String, port: u16, task: NaiveTask) -> Result<String, String> {
         .map_err(|e| e.to_string())
 }
 
-/// Sends a `PUT` request with an `UpdateTask` as the body. The server will 
+/// Sends a `PUT` request with an `UpdateTask` as the body. The server will
 /// parse the `Some` fields and update the corresponding task with the new
 /// information.
 pub fn update(host: String, port: u16, task: UpdateTask) -> Result<String, String> {
@@ -92,7 +97,7 @@ pub fn update(host: String, port: u16, task: UpdateTask) -> Result<String, Strin
 }
 
 /// Sends a `DELETE` request with an ID as the body. The server will delete the
-/// corresponding task---it will be removed entirely and **not** be added to 
+/// corresponding task---it will be removed entirely and **not** be added to
 /// the completed queue.
 pub fn delete(host: String, port: u16, id: usize, completed: bool) -> Result<String, String> {
     let mut url = convert_url(host, port)?;
@@ -186,7 +191,7 @@ pub fn status(host: String, port: u16) -> Result<String, String> {
     })
 }
 
-/// Sends a `PUT` request with a `Priority` trait object as the body. The 
+/// Sends a `PUT` request with a `Priority` trait object as the body. The
 /// server will apply the priority to the scheduler.
 pub fn set_priority(
     host: String,
@@ -223,7 +228,7 @@ pub fn get_priority(host: String, port: u16) -> Result<String, String> {
 }
 
 /// Converts a user-defined `host` and `port` into a URL usable by `reqwest`.
-/// `reqwest` URL building is not very good, so a base URL of 
+/// `reqwest` URL building is not very good, so a base URL of
 /// `http://example.com` is defined and the user options are applied to it.
 fn convert_url(host: String, port: u16) -> Result<Url, String> {
     let mut url = Url::parse("http://example.com").map_err(|e| e.to_string())?;
