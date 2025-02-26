@@ -20,44 +20,53 @@ pub fn list(
     url.set_path("api/tasks");
 
     let response = blocking::get(url)
-        .map_err(|e| e.to_string())?
-        .text()
         .map_err(|e| e.to_string())?;
 
-    let queue: TaskQueue = serde_json::from_str(&response).map_err(|e| e.to_string())?;
-    let mut tasks: Vec<Task> = if info.completed {
-        queue.iter_completed().map(|t| t.to_owned()).collect()
-    } else {
-        queue.iter().map(|t| t.to_owned()).collect()
-    };
+    match response.status() {
+        StatusCode::OK => {
+            let text = response.text().map_err(|e| e.to_string())?;
+            let queue: TaskQueue = serde_json::from_str(&text).map_err(|e| e.to_string())?;
+            let mut tasks: Vec<Task> = if info.completed {
+                queue.iter_completed().map(|t| t.to_owned()).collect()
+            } else {
+                queue.iter().map(|t| t.to_owned()).collect()
+            };
 
-    // do some filtering based on cli options
+            // do some filtering based on cli options
 
-    if let Some(before) = info.before {
-        tasks.retain(|t| t.deadline < before);
-    }
-    if let Some(after) = info.after {
-        tasks.retain(|t| t.deadline > after);
-    }
-    if let Some(shorter) = info.shorter {
-        tasks.retain(|t| t.duration < shorter);
-    }
-    if let Some(longer) = info.longer {
-        tasks.retain(|t| t.duration > longer);
-    }
-    if let Some(lower) = info.lower {
-        tasks.retain(|t| t.priority < lower);
-    }
-    if let Some(higher) = info.higher {
-        tasks.retain(|t| t.priority > higher);
-    }
+            if let Some(before) = info.before {
+                tasks.retain(|t| t.deadline < before);
+            }
+            if let Some(after) = info.after {
+                tasks.retain(|t| t.deadline > after);
+            }
+            if let Some(shorter) = info.shorter {
+                tasks.retain(|t| t.duration < shorter);
+            }
+            if let Some(longer) = info.longer {
+                tasks.retain(|t| t.duration > longer);
+            }
+            if let Some(lower) = info.lower {
+                tasks.retain(|t| t.priority < lower);
+            }
+            if let Some(higher) = info.higher {
+                tasks.retain(|t| t.priority > higher);
+            }
 
-    // collect retained tasks into a string representation
+            // collect retained tasks into a string representation
 
-    if tasks.is_empty() {
-        Ok("No tasks match the specified bounds".to_string())
-    } else {
-        Ok(tasks.iter().map(|t| t.display(&date_format)).collect())
+            if tasks.is_empty() {
+                Ok("No tasks match the specified bounds".to_string())
+            } else {
+                Ok(tasks.iter().map(|t| t.display(&date_format)).collect())
+            }
+        },
+        StatusCode::NOT_FOUND => {
+            Ok("There are no tasks in the queue".to_string())
+        }
+        _ => {
+            Err("Unable to retrieve tasks".to_string())
+        }
     }
 }
 
