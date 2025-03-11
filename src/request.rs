@@ -108,7 +108,7 @@ pub fn update(host: String, port: u16, task: UpdateTask) -> Result<String, Strin
 /// Sends a `DELETE` request with an ID as the body. The server will delete the
 /// corresponding task---it will be removed entirely and **not** be added to
 /// the completed queue.
-pub fn delete(host: String, port: u16, id: usize, completed: bool) -> Result<String, String> {
+pub fn delete(host: String, port: u16, ids: Vec<usize>, completed: bool) -> Result<String, String> {
     let mut url = convert_url(host, port)?;
     url.set_path(if completed {
         "api/tasks/complete"
@@ -118,13 +118,18 @@ pub fn delete(host: String, port: u16, id: usize, completed: bool) -> Result<Str
 
     let client = Client::new();
 
-    client
-        .delete(url)
-        .body(serde_json::to_string(&id).map_err(|e| e.to_string())?)
-        .send()
-        .map_err(|e| e.to_string())?
-        .text()
-        .map_err(|e| e.to_string())
+    let mut result = String::new();
+    for id in ids {
+        result = client
+            .delete(url.clone())
+            .body(serde_json::to_string(&id).map_err(|e| e.to_string())?)
+            .send()
+            .map_err(|e| e.to_string())?
+            .text()
+            .map_err(|e| e.to_string())?;
+    }
+
+    Ok(result)
 }
 
 /// Sends a `PUT` request with an ID as the body. The server will remove the

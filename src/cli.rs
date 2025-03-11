@@ -84,12 +84,12 @@ pub enum Command {
         priority: Option<PriorityLevel>,
     },
 
-    /// Delete a task from the queue
+    /// Delete tasks from the queue
     Delete {
-        /// The ID of the task to be deleted
-        id: usize,
+        /// The IDs of the tasks to be deleted
+        id: Vec<usize>,
 
-        /// Delete a task from the completed list
+        /// Delete tasks from the completed list
         #[arg(short, long)]
         completed: bool,
     },
