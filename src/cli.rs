@@ -86,7 +86,7 @@ pub enum Command {
 
     /// Delete tasks from the queue
     Delete {
-        /// The IDs of the tasks to be deleted
+        /// The ID(s) of the task(s) to be deleted
         id: Vec<usize>,
 
         /// Delete tasks from the completed list
@@ -94,10 +94,10 @@ pub enum Command {
         completed: bool,
     },
 
-    /// Mark a task as complete
+    /// Mark tasks as complete
     Complete {
-        /// The ID of the task to be marked as complete
-        id: usize,
+        /// The ID(s) of the task(s) to be marked as complete
+        id: Vec<usize>,
     },
 
     /// Enable the scheduler

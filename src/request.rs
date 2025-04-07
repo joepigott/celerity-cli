@@ -134,19 +134,24 @@ pub fn delete(host: String, port: u16, ids: Vec<usize>, completed: bool) -> Resu
 
 /// Sends a `PUT` request with an ID as the body. The server will remove the
 /// task from the queue and add it to the completed list.
-pub fn complete(host: String, port: u16, id: usize) -> Result<String, String> {
+pub fn complete(host: String, port: u16, ids: Vec<usize>) -> Result<String, String> {
     let mut url = convert_url(host, port)?;
     url.set_path("api/tasks/complete");
 
     let client = Client::new();
 
-    client
-        .put(url)
-        .body(serde_json::to_string(&id).map_err(|e| e.to_string())?)
-        .send()
-        .map_err(|e| e.to_string())?
-        .text()
-        .map_err(|e| e.to_string())
+    let mut result = String::new();
+    for id in ids {
+        result = client
+            .put(url.clone())
+            .body(serde_json::to_string(&id).map_err(|e| e.to_string())?)
+            .send()
+            .map_err(|e| e.to_string())?
+            .text()
+            .map_err(|e| e.to_string())?;
+    }
+
+    Ok(result)
 }
 
 /// Sends a `POST` request to enable or disable the scheduler, depending on the
