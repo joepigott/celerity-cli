@@ -1,7 +1,7 @@
 # `tasks`
 
 This is the reference implementation for the 
-[`taskscheduler`](https://git.pigroy.xyz/pigroy/taskscheduler.git) client.
+[`taskscheduler`](https://github.com/joepigott/taskscheduler) client.
 
 ## Configuration
 
