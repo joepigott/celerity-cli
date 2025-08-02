@@ -227,7 +227,7 @@ checksum = "f46ad14479a25103f283c0f10005961cf086d8dc42205bb44c46ac563475dca6"
 [[package]]
 name = "color"
 version = "0.2.0"
-source = "git+https://git.pigroy.xyz/pigroy/color.git#7a84e80b7bb19fb0822b280cab373758e79e835d"
+source = "git+https://git.joepigott.dev/pigroy/color.git#7a84e80b7bb19fb0822b280cab373758e79e835d"
 
 [[package]]
 name = "colorchoice"
@@ -1113,7 +1113,7 @@ checksum = "e3148f5046208a5d56bcfc03053e3ca6334e51da8dfb19b6cdc8b306fae3283e"
 [[package]]
 name = "piglog"
 version = "0.1.1"
-source = "git+https://git.pigroy.xyz/pigroy/piglog.git#47948d66770a93924fc6027f497ea35a0a5dc4c5"
+source = "git+https://git.joepigott.dev/pigroy/piglog.git#b6703ec7a83c71da57b8fb40dbec7eddc91c8a1d"
 dependencies = [
  "chrono",
  "color",
@@ -1581,6 +1581,7 @@ dependencies = [
 [[package]]
 name = "taskscheduler"
 version = "0.1.2"
+source = "git+https://git.joepigott.dev/pigroy/taskscheduler.git#fc58189879dd5ebef75840dafe6294a96104c9ff"
 dependencies = [
  "chrono",
  "piglog",

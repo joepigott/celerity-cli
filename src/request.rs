@@ -1,6 +1,6 @@
 use crate::util::ListInfo;
 use chrono::Duration;
-use reqwest::blocking::{self, Client};
+use reqwest::blocking::Client;
 use reqwest::{Url, StatusCode};
 use taskscheduler::priority::Priority;
 use taskscheduler::{NaiveTask, Task, TaskQueue, UpdateTask};
@@ -19,7 +19,11 @@ pub fn list(
     let mut url = convert_url(host, port)?;
     url.set_path("api/tasks");
 
-    let response = blocking::get(url)
+    let client = Client::new();
+
+    let response = client
+        .get(url)
+        .send()
         .map_err(|e| e.to_string())?;
 
     match response.status() {
@@ -181,7 +185,11 @@ pub fn active(host: String, port: u16, date_format: String) -> Result<String, St
     let mut url = convert_url(host, port)?;
     url.set_path("api/tasks/active");
 
-    let response = blocking::get(url)
+    let client = Client::new();
+
+    let response = client
+        .get(url)
+        .send()
         .map_err(|e| e.to_string())?;
 
     match response.status() {
@@ -205,7 +213,11 @@ pub fn status(host: String, port: u16) -> Result<String, String> {
     let mut url = convert_url(host, port)?;
     url.set_path("api/tasks/status");
 
-    let response = blocking::get(url)
+    let client = Client::new();
+
+    let response = client
+        .get(url)
+        .send()
         .map_err(|e| e.to_string())?
         .text()
         .map_err(|e| e.to_string())?
@@ -246,7 +258,11 @@ pub fn get_priority(host: String, port: u16) -> Result<String, String> {
     let mut url = convert_url(host, port)?;
     url.set_path("api/tasks/priority");
 
-    let response = blocking::get(url)
+    let client = Client::new();
+
+    let response = client
+        .get(url)
+        .send()
         .map_err(|e| e.to_string())?
         .text()
         .map_err(|e| e.to_string())?;
@@ -259,12 +275,12 @@ pub fn get_priority(host: String, port: u16) -> Result<String, String> {
 /// `reqwest` URL building is not very good, so a base URL of
 /// `http://example.com` is defined and the user options are applied to it.
 fn convert_url(host: String, port: u16) -> Result<Url, String> {
-    let mut url = Url::parse("http://example.com").map_err(|e| e.to_string())?;
+    let mut url = Url::parse("https://example.com").map_err(|e| e.to_string())?;
     url.set_host(Some(&host))
         .map_err(|_| "Unable to set URL host")?;
     url.set_port(Some(port))
         .map_err(|_| "Unable to set URL port")?;
-    url.set_scheme("http")
+    url.set_scheme("https")
         .map_err(|_| "Unable to set URL scheme")?;
 
     Ok(url)
