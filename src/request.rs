@@ -12,7 +12,7 @@ use taskscheduler::{NaiveTask, Task, TaskQueue, UpdateTask};
 /// to filter the tasks.
 pub fn list(
     host: String,
-    port: u16,
+    port: Option<u16>,
     info: ListInfo,
     date_format: String,
 ) -> Result<String, String> {
@@ -76,7 +76,7 @@ pub fn list(
 
 /// Sends a `POST` request with a `NaiveTask` as the body. The server will give
 /// this task an ID and add it to the queue.
-pub fn add(host: String, port: u16, task: NaiveTask) -> Result<String, String> {
+pub fn add(host: String, port: Option<u16>, task: NaiveTask) -> Result<String, String> {
     let mut url = convert_url(host, port)?;
     url.set_path("api/tasks");
 
@@ -94,7 +94,7 @@ pub fn add(host: String, port: u16, task: NaiveTask) -> Result<String, String> {
 /// Sends a `PUT` request with an `UpdateTask` as the body. The server will
 /// parse the `Some` fields and update the corresponding task with the new
 /// information.
-pub fn update(host: String, port: u16, task: UpdateTask) -> Result<String, String> {
+pub fn update(host: String, port: Option<u16>, task: UpdateTask) -> Result<String, String> {
     let mut url = convert_url(host, port)?;
     url.set_path("api/tasks");
 
@@ -112,7 +112,7 @@ pub fn update(host: String, port: u16, task: UpdateTask) -> Result<String, Strin
 /// Sends a `DELETE` request with an ID as the body. The server will delete the
 /// corresponding task---it will be removed entirely and **not** be added to
 /// the completed queue.
-pub fn delete(host: String, port: u16, ids: Vec<usize>, completed: bool) -> Result<String, String> {
+pub fn delete(host: String, port: Option<u16>, ids: Vec<usize>, completed: bool) -> Result<String, String> {
     let mut url = convert_url(host, port)?;
     url.set_path(if completed {
         "api/tasks/complete"
@@ -138,7 +138,7 @@ pub fn delete(host: String, port: u16, ids: Vec<usize>, completed: bool) -> Resu
 
 /// Sends a `PUT` request with an ID as the body. The server will remove the
 /// task from the queue and add it to the completed list.
-pub fn complete(host: String, port: u16, ids: Vec<usize>) -> Result<String, String> {
+pub fn complete(host: String, port: Option<u16>, ids: Vec<usize>) -> Result<String, String> {
     let mut url = convert_url(host, port)?;
     url.set_path("api/tasks/complete");
 
@@ -160,7 +160,7 @@ pub fn complete(host: String, port: u16, ids: Vec<usize>) -> Result<String, Stri
 
 /// Sends a `POST` request to enable or disable the scheduler, depending on the
 /// value of `enable`.
-pub fn enable(host: String, port: u16, enable: bool) -> Result<String, String> {
+pub fn enable(host: String, port: Option<u16>, enable: bool) -> Result<String, String> {
     let mut url = convert_url(host, port)?;
     url.set_path(if enable {
         "api/tasks/enable"
@@ -181,7 +181,7 @@ pub fn enable(host: String, port: u16, enable: bool) -> Result<String, String> {
 /// Sends a `GET` request, which will return the active task according to the
 /// current scheduler priority. The task will be returned whether the scheduler
 /// is enabled or not.
-pub fn active(host: String, port: u16, date_format: String) -> Result<String, String> {
+pub fn active(host: String, port: Option<u16>, date_format: String) -> Result<String, String> {
     let mut url = convert_url(host, port)?;
     url.set_path("api/tasks/active");
 
@@ -209,7 +209,7 @@ pub fn active(host: String, port: u16, date_format: String) -> Result<String, St
 
 /// Sends a `GET` request, which will return the status of the scheduler
 /// (`enabled` or `disabled`).
-pub fn status(host: String, port: u16) -> Result<String, String> {
+pub fn status(host: String, port: Option<u16>) -> Result<String, String> {
     let mut url = convert_url(host, port)?;
     url.set_path("api/tasks/status");
 
@@ -235,7 +235,7 @@ pub fn status(host: String, port: u16) -> Result<String, String> {
 /// server will apply the priority to the scheduler.
 pub fn set_priority(
     host: String,
-    port: u16,
+    port: Option<u16>,
     priority: Box<dyn Priority>,
 ) -> Result<String, String> {
     let mut url = convert_url(host, port)?;
@@ -254,7 +254,7 @@ pub fn set_priority(
 
 /// Sends a `GET` request, which returns a string representation of the current
 /// scheduler priority.
-pub fn get_priority(host: String, port: u16) -> Result<String, String> {
+pub fn get_priority(host: String, port: Option<u16>) -> Result<String, String> {
     let mut url = convert_url(host, port)?;
     url.set_path("api/tasks/priority");
 
@@ -274,12 +274,14 @@ pub fn get_priority(host: String, port: u16) -> Result<String, String> {
 /// Converts a user-defined `host` and `port` into a URL usable by `reqwest`.
 /// `reqwest` URL building is not very good, so a base URL of
 /// `http://example.com` is defined and the user options are applied to it.
-fn convert_url(host: String, port: u16) -> Result<Url, String> {
+fn convert_url(host: String, port: Option<u16>) -> Result<Url, String> {
     let mut url = Url::parse("https://example.com").map_err(|e| e.to_string())?;
     url.set_host(Some(&host))
         .map_err(|_| "Unable to set URL host")?;
-    url.set_port(Some(port))
-        .map_err(|_| "Unable to set URL port")?;
+    if let Some(port) = port {
+        url.set_port(Some(port))
+            .map_err(|_| "Unable to set URL port")?;
+    }
     url.set_scheme("https")
         .map_err(|_| "Unable to set URL scheme")?;
 

@@ -14,7 +14,7 @@ pub struct Server {
     pub host: String,
 
     /// Server port
-    pub port: u16,
+    pub port: Option<u16>,
 }
 
 #[derive(Deserialize)]
