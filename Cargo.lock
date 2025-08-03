@@ -1565,7 +1565,7 @@ dependencies = [
 
 [[package]]
 name = "tasks"
-version = "0.1.3"
+version = "0.2.0"
 dependencies = [
  "chrono",
  "clap",
@@ -1580,8 +1580,8 @@ dependencies = [
 
 [[package]]
 name = "taskscheduler"
-version = "0.1.2"
-source = "git+https://git.joepigott.dev/pigroy/taskscheduler.git#fc58189879dd5ebef75840dafe6294a96104c9ff"
+version = "0.2.0"
+source = "git+https://github.com/joepigott/taskscheduler.git?tag=0.2.0#f7e2bf5c79a3419d2e5489aafee26a12c32b74f8"
 dependencies = [
  "chrono",
  "piglog",
