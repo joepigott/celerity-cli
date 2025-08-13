@@ -57,8 +57,8 @@ pub enum Command {
         #[arg(short = 'D', long, required = true, value_parser = duration_parser)]
         duration: Duration,
 
-        /// The task's priority. Lower values are higher priority.
-        #[arg(short, long, required = true)]
+        /// The task's priority
+        #[arg(short, long, default_value = "normal")]
         priority: PriorityLevel,
     },
 
