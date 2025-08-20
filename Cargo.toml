@@ -2,7 +2,7 @@
 name = "tasks"
 authors = ["Joe Pigott <joe@joepigott.dev>"]
 description = "A CLI client for `taskscheduler`, the smart todo list"
-version = "0.2.0"
+version = "0.3.0"
 edition = "2021"
 
 [dependencies]

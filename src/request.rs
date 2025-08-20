@@ -125,8 +125,7 @@ pub fn delete(host: String, port: Option<u16>, ids: Vec<usize>, completed: bool)
     let mut result = String::new();
     for id in ids {
         result = client
-            .delete(url.clone())
-            .body(serde_json::to_string(&id).map_err(|e| e.to_string())?)
+            .delete(format!("{url}/{id}"))
             .send()
             .map_err(|e| e.to_string())?
             .text()
@@ -147,7 +146,7 @@ pub fn complete(host: String, port: Option<u16>, ids: Vec<usize>) -> Result<Stri
     let mut result = String::new();
     for id in ids {
         result = client
-            .put(url.clone())
+            .put(format!("{url}/{id}"))
             .body(serde_json::to_string(&id).map_err(|e| e.to_string())?)
             .send()
             .map_err(|e| e.to_string())?
