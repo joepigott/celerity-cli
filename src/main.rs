@@ -1,7 +1,7 @@
 use clap::Parser;
 use cli::{Cli, Command};
 use color::term::Red;
-use taskscheduler::{NaiveTask, UpdateTask};
+use celerity::{NaiveTask, UpdateTask};
 
 mod cli;
 mod config;

@@ -1,7 +1,7 @@
 use chrono::{Duration, NaiveDateTime};
 use clap::{Parser, Subcommand};
-use taskscheduler::priority::{self, Priority};
-use taskscheduler::PriorityLevel;
+use celerity::priority::{self, Priority};
+use celerity::PriorityLevel;
 
 #[derive(Parser)]
 #[command(author, version, about, long_about = None)]

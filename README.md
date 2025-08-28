@@ -1,7 +1,7 @@
 # `tasks`
 
 This is the reference implementation for the 
-[`taskscheduler`](https://github.com/joepigott/taskscheduler) client.
+[`celerity`](https://github.com/joepigott/celerity) CLI client.
 
 ## Configuration
 

@@ -2,8 +2,8 @@ use crate::util::ListInfo;
 use chrono::Duration;
 use reqwest::blocking::Client;
 use reqwest::{Url, StatusCode};
-use taskscheduler::priority::Priority;
-use taskscheduler::{NaiveTask, Task, TaskQueue, UpdateTask};
+use celerity::priority::Priority;
+use celerity::{NaiveTask, Task, TaskQueue, UpdateTask};
 
 /// Sends a `GET` request to fetch the task queue, and lists the tasks.
 /// `ListInfo` contains arguments defined by the user for filtering. The

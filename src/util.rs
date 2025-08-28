@@ -1,5 +1,5 @@
 use chrono::{Duration, NaiveDateTime};
-use taskscheduler::PriorityLevel;
+use celerity::PriorityLevel;
 
 /// Contains information to be used in filtering the task list.
 pub struct ListInfo {
