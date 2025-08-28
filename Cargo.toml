@@ -5,6 +5,10 @@ description = "A CLI client for `celerity`, the smart todo list"
 version = "0.4.0"
 edition = "2021"
 
+[[bin]]
+name = "celerity"
+path = "src/main.rs"
+
 [dependencies]
 clap = { version = "4.5.27", features = ["derive"] }
 dirs-next = "2.0.0"

@@ -27,7 +27,7 @@ pub struct Client {
 /// Parses the configuration file into a `toml::Table` (a hashmap).
 pub fn config() -> Result<Config, String> {
     let mut config_dir = dirs_next::config_dir().ok_or("Unable to locate config directory")?;
-    config_dir.push("tasks");
+    config_dir.push("celerity");
     config_dir.push("config.toml");
 
     config_dir
